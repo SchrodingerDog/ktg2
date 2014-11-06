@@ -1,0 +1,1 @@
+C:\xampp\htdocs\ktg\app/views/news/show.blade.php
