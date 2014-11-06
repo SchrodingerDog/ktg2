@@ -1,14 +1,29 @@
 <?php 
+
 class LoginController extends BaseController{
 	public function __construct()
     {
         $this->beforeFilter('auth', array('on' => 'logout'));
 
-        $this->beforeFilter('csrf', array('on' => 'loginGET'));
+        $this->beforeFilter('csrf', array('on' => 'loginPOST, registerPOST'));
     }
 
 	public function loginGET(){
 		return View::make('login.login');
+	}
+
+	public function registerGET(){
+		return View::make('login.register');
+	}
+
+	public function registerPOST(){
+		$user = Sentry::register(array(
+	        'email'    => Input::get('email'),
+	        'password' => Input::get('password'),
+	        'last_name' => Input::get('last_name'),
+	        'first_name' => Input::get('first_name'),
+	    ), true);
+		return Redirect::route('login.loginGET');
 	}
 
 	public function loginPOST(){

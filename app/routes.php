@@ -15,7 +15,10 @@ Route::get('/', array('as'=>'root', 'uses'=>'NewsController@index'));
 Route::get('/login', array('as'=>'login.loginGET', 'uses'=>'LoginController@loginGET'));
 Route::post('/login', array('as'=>'login.loginPOST', 'uses'=>'LoginController@loginPOST'));
 
+Route::get('/register', array('as'=>'login.registerGET', 'uses'=>'LoginController@registerGET'));
+Route::post('/register', array('as'=>'login.registerPOST', 'uses'=>'LoginController@registerPOST'));
+
 Route::get('/logout', array('as'=>'logout', 'uses'=>'LoginController@logout'));
 
-Route::get('/news/{id}/delete', array('as'=>'news.delete', 'uses'=>'NewsController@delete'));
 Route::resource('news', 'NewsController');
+Route::get('/news/{id}/delete', array('as'=>'news.delete', 'uses'=>'NewsController@delete'));

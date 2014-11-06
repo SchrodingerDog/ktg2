@@ -36,11 +36,13 @@
 	      <li><a href="#">Galerie</a></li> -->
 	    </ul>
 	    <ul class="nav navbar-nav navbar-right">
-	    <li>
+	    
 	    	@if(!Sentry::check())
-				<a href="{{URL::route('login.loginGET')}}">Niezalogowany login</a>
+				<li><a href="{{URL::route('login.loginGET')}}">Zaloguj</a></li>
+				<li><a href="{{URL::route('login.registerGET')}}">Zarejestruj</a></li>
 			@else
-				<a href="{{URL::route('logout')}}">Zalogowany logout</a>
+				<li><a href="{{URL::route('logout')}}">Wyloguj</a></li>
+				<li><a href="{{URL::route('logout')}}">Mój profil</a></li>
 			@endif
 
 	    </li>
@@ -52,9 +54,9 @@
     
     <div class="container">
     @if(Session::get('message'))
-	    <div class="alert alert-success alert-dismissible" role="alert">
+	    <div class="alert alert-{{Session::get('message')[0]}} alert-dismissible" role="alert">
 		  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-		  <strong>Sukces!</strong> &nbsp;{{Session::get('message')}}
+		  {{Session::get('message')[1]}}
 		</div>
 	@endif
 			@yield('content')

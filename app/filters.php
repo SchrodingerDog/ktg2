@@ -48,6 +48,17 @@ Route::filter('auth', function()
 	}
 });
 
+Route::filter('admin', function($route)
+{
+	if (Sentry::check())
+	{
+		if (!Sentry::getUser()->hasAccess('admin'))
+		{
+			return Redirect::guest('login')->with('message', ['warning','Musisz się zalogować na konto Administratora']);
+		}
+	}
+});
+
 
 Route::filter('auth.basic', function()
 {

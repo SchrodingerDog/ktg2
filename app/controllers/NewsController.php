@@ -4,7 +4,8 @@ class NewsController extends \BaseController {
 
 	public function __construct()
     {
-        $this->beforeFilter('auth', array('except' => 'index'));
+        // $this->beforeFilter('auth|admin', array('except' => 'index'));
+        $this->beforeFilter('admin', array('except' => 'index'));
 
         $this->beforeFilter('csrf', array('except' => ['index', 'create', 'show', 'edit', 'delete']));
     }
@@ -41,7 +42,7 @@ class NewsController extends \BaseController {
 	{
 		$news = new News;
 		if ($news->save()) {
-            return Redirect::route('news.index')->with('message', 'News stworzony!');
+            return Redirect::route('news.index')->with('message', ['success','News stworzony!']);
         } else {
             return Redirect::to(URL::previous())->withErrors($news->errors());
         }
@@ -84,7 +85,7 @@ class NewsController extends \BaseController {
 	{
 		$news = News::findOrFail($id);
 		if ($news->save()) {
-            return Redirect::route('news.index')->with('message', 'News zaktualizowany!');
+            return Redirect::route('news.index')->with('message', ['success','News zaktualizowany!']);
         } else {
             return Redirect::to(URL::previous())->withErrors($news->errors());
         }
@@ -115,7 +116,7 @@ class NewsController extends \BaseController {
 	{
 		News::destroy($id);
 
-		return Redirect::route('news.index')->with('message', 'News usunięty!');
+		return Redirect::route('news.index')->with('message', ['success','News usunięty!']);
 	}
 
 }
