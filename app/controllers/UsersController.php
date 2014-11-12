@@ -1,14 +1,75 @@
-<?php 
+<?php
+use Cartalyst\Sentry\Users\Eloquent\User;
 
-class LoginController extends BaseController{
+class UsersController extends \BaseController {
 	public function __construct()
     {
-        $this->beforeFilter('auth', array('on' => 'logout'));
+        // $this->beforeFilter('auth|admin', array('except' => 'index'));
+        $this->beforeFilter('admin', array('on' => 'auth'));
+        $this->beforeFilter('auth', array('on' => ['edit','update', 'logout']));
 
-        $this->beforeFilter('csrf', array('on' => 'loginPOST, registerPOST'));
+        $this->beforeFilter('csrf', array('on' => ['update', 'auth', 'registerPOST', 'loginPOST']));
     }
 
-    public function auth($id, $code){
+    public function index()
+	{
+		$users = User::all();
+
+		return View::make('user.index', compact('users'));
+	}
+
+	
+	public function edit()
+	{
+		$user = Sentry::getUser();
+
+		return View::make('user.edit', compact('user'));
+	}
+	private function resizeAndSave($user){
+		$filename = md5(uniqid(rand(), true)).'.'.Input::file('picture')->getClientOriginalExtension();
+	    Input::file('picture')->move('public/users/', $filename);
+	    $user->picture = 'users/'.$filename;
+	    $img = Image::make(public_path().'/'.$user->picture);
+
+		$img->resize(200, null, function ($constraint) {
+		    $constraint->aspectRatio();
+		});
+
+		$img->save(public_path().'/'.$user->picture);
+	} 
+	/**
+	 * Update the specified news in storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function update()
+	{
+		$user = Sentry::getUser();
+		$user->email = Input::get('email');
+		$user->last_name = Input::get('last_name');
+		$user->first_name = Input::get('first_name');
+		if (Input::hasFile('picture')){
+			if (Input::file('picture')->isValid())
+			{
+				if (File::exists(public_path().'/'.$user->picture)) {
+					File::delete(public_path().'/'.$user->picture);
+				}else{
+					$user->picture = null;
+				}
+				$this->resizeAndSave($user);
+			}
+		}
+		if ($user->save()) {
+            return Redirect::route('user.edit')->with('message', ['success','Profil został pomyślnie zaktualizowany!']);
+        } else {
+            return Redirect::to(URL::previous())->withErrors($user->errors());
+        }
+
+		return Redirect::route('user.edit');
+	}
+
+	public function auth($id, $code){
 		$user = Sentry::findUserById($id);
 
 	    // Attempt to activate the user
@@ -23,11 +84,11 @@ class LoginController extends BaseController{
 	}
 
 	public function loginGET(){
-		return View::make('login.login');
+		return View::make('user.login');
 	}
 
 	public function registerGET(){
-		return View::make('login.register');
+		return View::make('user.register');
 	}
 
 	public function registerPOST(){
@@ -44,10 +105,8 @@ class LoginController extends BaseController{
 
 		    if (Input::file('picture')->isValid())
 			{
-				$filename = md5(uniqid(rand(), true)).'.'.Input::file('picture')->getClientOriginalExtension();
-			    Input::file('picture')->move('public/users/', $filename);
-			    $user->picture = 'users/'.$filename;
-			    $user->save();
+				$this->resizeAndSave($user);
+				$user->save();
 			}
 
 	    	$data = array(
@@ -82,7 +141,7 @@ class LoginController extends BaseController{
 			    ->withInput()
 	       		->withErrors(array('email' => 'Taki użytkownik już istnieje'));
 		}
-		return Redirect::route('login.loginGET');
+		return Redirect::route('user.loginGET');
 	}
 
 	public function loginPOST(){
@@ -144,6 +203,6 @@ class LoginController extends BaseController{
 	public function logout()
 	{
 		Sentry::logout();
-		return Redirect::to(URL::previous());
+		return Redirect::to(URL::route('root'));
 	}
 }

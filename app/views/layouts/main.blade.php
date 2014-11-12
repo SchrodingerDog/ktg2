@@ -10,6 +10,7 @@
     <title>KTG</title>
 
     {{ HTML::style('/css/bootstrap.min.css') }}
+    {{ HTML::style('/css/style.css') }}
   </head>
 
   <body>
@@ -31,18 +32,21 @@
 	        @if (Route::currentRouteName()=="root") class="active" @endif >
 	          <a href="{{ URL::route('root'); }}"> Strona Główna </a>
 	      </li>
-	      <!-- <li><a href="#">To my!</a></li>
-	      <li><a href="#">Wyjazdy</a></li>
+	      <li 
+	        @if (Route::currentRouteName()=="user.index") class="active" @endif >
+	          <a href="{{ URL::route('user.index'); }}"> To My </a>
+	      </li>
+	      <!-- <li><a href="#">Wyjazdy</a></li>
 	      <li><a href="#">Galerie</a></li> -->
 	    </ul>
 	    <ul class="nav navbar-nav navbar-right">
 	    
 	    	@if(!Sentry::check())
-				<li><a href="{{URL::route('login.loginGET')}}">Zaloguj</a></li>
-				<li><a href="{{URL::route('login.registerGET')}}">Zarejestruj</a></li>
+				<li><a href="{{URL::route('user.loginGET')}}">Zaloguj</a></li>
+				<li><a href="{{URL::route('user.registerGET')}}">Zarejestruj</a></li>
 			@else
-				<li><a href="{{URL::route('logout')}}">Wyloguj</a></li>
-				<li><a href="{{URL::route('logout')}}">Mój profil</a></li>
+				<li><a href="{{URL::route('user.logout')}}">Wyloguj</a></li>
+				<li><a href="{{URL::route('user.edit')}}">Mój profil</a></li>
 			@endif
 
 	    </li>
@@ -68,6 +72,9 @@
 
     {{ HTML::script('js/jquery.min.js')}} 
     {{ HTML::script('js/bootstrap.min.js')}}
+    {{ HTML::script('js/masonry.pkgd.min.js')}}
+    
+	@yield('add-js')
 
   </body>
 </html>

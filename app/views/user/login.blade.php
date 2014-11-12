@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('content')
-	{{Form::open(['route'=>'login.loginPOST']);}}
+	{{Form::open(['route'=>'user.loginPOST']);}}
 	<div class="form-group @if ($errors->first('email')) has-error has-feedback @endif">
         {{ Form::label('email', 'Email', $attributes = array('class'=>'control-label')) }}
 		{{ Form::text('email', $value = null, $attributes = array('class'=>'form-control')) }}
